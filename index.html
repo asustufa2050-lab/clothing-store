@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store</title>
+</head>
+<body>
+
+<h1>Clothing Store</h1>
+
+<input id="email" placeholder="Email" />
+<input id="password" placeholder="Password" type="password" />
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
+
+<h2>Products</h2>
+<div id="products"></div>
+
+<script>
+let token = '';
+
+async function register(){
+  await fetch('http://localhost:5000/register',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email.value,password:password.value})
+  });
+  alert('Registered');
+}
+
+async function login(){
+  const res = await fetch('http://localhost:5000/login',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email.value,password:password.value})
+  });
+  const data = await res.json();
+  token = data.token;
+  loadProducts();
+}
+
+async function loadProducts(){
+  const res = await fetch('http://localhost:5000/products');
+  const data = await res.json();
+
+  const container = document.getElementById('products');
+  container.innerHTML='';
+
+  data.forEach(p=>{
+    container.innerHTML += `<div>
+      <h3>${p.name}</h3>
+      <p>${p.price}</p>
+      <img src="${p.image}" width="100"/>
+    </div>`;
+  });
+}
+</script>
+
+</body>
+</html>
+*/
