@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongodb+srv://asustifa2050:<db_password>@cluster0.bzctb9k.mongodb.net/?appName=Cluster0
+mongoose.connect("mongodb+srv://asustifa2050:yourpassword@cluster0...");
 
 // ================= MODELS =================
 const User = mongoose.model('User', {
