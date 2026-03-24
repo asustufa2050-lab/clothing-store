@@ -136,7 +136,25 @@ let token = localStorage.getItem("token") || '';
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // ================= LOGIN =================
-async function login(){
+async function register(){
+  const res = await fetch('https://clothing-store-2-vahe.onrender.com/register',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    })
+  });
+
+  const data = await res.json();
+
+  if(data.message){
+    alert("Registered successfully");
+  } else {
+    alert("Signup failed");
+  }
+}
+  async function login(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
