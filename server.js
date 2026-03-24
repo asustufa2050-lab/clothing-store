@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -8,7 +10,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect("mongodb+srv://asustifa2050:lra12345@cluster0...");
+// ✅ FIXED MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("DB Connected"))
+  .catch(err => console.log(err));
 
 // ================= MODELS =================
 const User = mongoose.model('User', {
@@ -37,7 +42,7 @@ app.post('/login', async (req, res) => {
   const valid = await bcrypt.compare(req.body.password, user.password);
   if (!valid) return res.status(400).send('Wrong password');
 
-  const token = jwt.sign({ id: user._id }, 'secret');
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   res.json({ token });
 });
 
@@ -54,4 +59,6 @@ app.post('/products', async (req, res) => {
 });
 
 // ================= START =================
-app.listen(5000, () => console.log('Server running on port 5000'));
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => console.log('Server running on port ' + PORT));
