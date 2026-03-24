@@ -19,7 +19,7 @@
 let token = '';
 
 async function register(){
-  await fetch('http://localhost:5000/register',{
+  await fetch('https://your-app.onrender.com/register',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email.value,password:password.value})
@@ -28,7 +28,7 @@ async function register(){
 }
 
 async function login(){
-  const res = await fetch('http://localhost:5000/login',{
+  const res = await fetch('https://your-app.onrender.com/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email.value,password:password.value})
@@ -39,7 +39,7 @@ async function login(){
 }
 
 async function loadProducts(){
-  const res = await fetch('http://localhost:5000/products');
+  const res = await fetch('https://your-app.onrender.com/products');
   const data = await res.json();
 
   const container = document.getElementById('products');
