@@ -149,7 +149,8 @@ async function register(){
   const data = await res.json();
 
   if(data.message){
-    alert("Registered successfully");
+    alert("Registered! Logging in...");
+login();
   } else {
     alert("Signup failed");
   }
