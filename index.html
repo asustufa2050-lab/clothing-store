@@ -120,20 +120,7 @@
 }
   </style>
 </head>
-<footer class="footer">
-  <div class="footer-content">
-    <h2>STORE</h2>
-    <p>Minimal fashion. Maximum impact.</p>
 
-    <div class="footer-links">
-      <span>About</span>
-      <span>Contact</span>
-      <span>Privacy</span>
-    </div>
-
-    <p class="copyright">© 2026 STORE</p>
-  </div>
-</footer>
 <body>
 
 <header>
@@ -245,46 +232,32 @@ async function loadProducts(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/products');
   const data = await res.json();
 
- products.innerHTML += `
-  <div class="card">
+  products.innerHTML = '';
 
-    <div class="img-container" onclick='openProduct(${JSON.stringify(p)})'>
-      <img src="${p.image}">
-      <div class="overlay">
-        <button onclick="event.stopPropagation(); addToCart('${p._id}','${p.name}',${p.price})">Add to Cart</button>
-      </div>
-    </div>
+  data.forEach(p => {
+    products.innerHTML += `
+      <div class="card">
 
-    <div class="card-info">
-      <h3>${p.name}</h3>
-      <div class="price-row">
-        <span class="price">₹${p.price}</span>
-        <span class="wishlist" onclick="addWishlist('${p._id}','${p.name}',${p.price})">❤️</span>
-      </div>
-    </div>
+        <div class="img-container" onclick='openProduct(${JSON.stringify(p)})'>
+          <img src="${p.image}">
+          <div class="overlay">
+            <button onclick="event.stopPropagation(); addToCart('${p._id}','${p.name}',${p.price})">
+              Add to Cart
+            </button>
+          </div>
+        </div>
 
-  </div>
-`;
-        <img src="${p.image}" onclick='openProduct(${JSON.stringify(p)})'>
-        <h3>${p.name}</h3>
-        <div class="price">₹${p.price}</div>
+        <div class="card-info">
+          <h3>${p.name}</h3>
+          <div class="price-row">
+            <span class="price">₹${p.price}</span>
+            <span class="wishlist" onclick="addWishlist('${p._id}','${p.name}',${p.price})">❤️</span>
+          </div>
+        </div>
 
-        <button onclick="addToCart('${p._id}','${p.name}',${p.price})">Add</button>
-        <button onclick="addWishlist('${p._id}','${p.name}',${p.price})">❤️</button>
       </div>
     `;
   });
-}
-
-function openProduct(p){
-  show('productModal');
-  productDetail.innerHTML = `
-    <span class="close" onclick="closeModal('productModal')">✖</span>
-    <img src="${p.image}" style="width:100%;height:250px;object-fit:cover;">
-    <h3>${p.name}</h3>
-    <p>₹${p.price}</p>
-    <button onclick="addToCart('${p._id}','${p.name}',${p.price})">Add to Cart</button>
-  `;
 }
 
 // ================= CART =================
@@ -352,6 +325,19 @@ async function addProduct(){
 updateCart();
 loadProducts();
 </script>
+<footer class="footer">
+  <div class="footer-content">
+    <h2>STORE</h2>
+    <p>Minimal fashion. Maximum impact.</p>
 
+    <div class="footer-links">
+      <span>About</span>
+      <span>Contact</span>
+      <span>Privacy</span>
+    </div>
+
+    <p class="copyright">© 2026 STORE</p>
+  </div>
+</footer>
 </body>
 </html>
