@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Clothing Store</title>
+  <title>STORE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    * {
       margin: 0;
-      background: #fff;
-      color: #111;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
     }
 
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+    }
+
+    /* NAVBAR */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 40px;
-      border-bottom: 1px solid #eee;
+      padding: 15px 30px;
+      background: rgba(15,15,15,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #222;
       position: sticky;
       top: 0;
-      background: white;
     }
 
     .logo {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
     }
 
     .nav-right {
@@ -38,69 +46,117 @@
     }
 
     input {
-      padding: 8px;
-      border: 1px solid #ddd;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #111;
+      color: #fff;
       font-size: 12px;
+      width: 100px;
     }
 
     button {
-      padding: 8px 12px;
-      border: 1px solid black;
-      background: black;
+      background: #6366f1;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 6px;
       color: white;
       cursor: pointer;
       font-size: 12px;
     }
 
     button:hover {
-      background: white;
-      color: black;
+      background: #4f46e5;
     }
 
+    /* HERO */
     .hero {
-      height: 60vh;
-      background: url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover;
+      height: 65vh;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3), #0f0f0f),
+                  url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
       font-size: 40px;
+      font-weight: 600;
       letter-spacing: 4px;
     }
 
+    /* PRODUCTS */
     .container {
-      padding: 40px;
+      padding: 30px;
     }
 
     .products {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: #181818;
+      border-radius: 16px;
+      overflow: hidden;
+      padding-bottom: 10px;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
 
     .card img {
       width: 100%;
-      height: 320px;
+      height: 280px;
       object-fit: cover;
+    }
+
+    .card:hover img {
+      transform: scale(1.05);
     }
 
     .card h3 {
       font-size: 14px;
-      margin: 10px 0 5px;
+      margin: 10px;
     }
 
     .price {
       font-size: 13px;
-      color: #555;
+      color: #aaa;
+      margin: 0 10px;
     }
 
+    .card button {
+      margin: 10px;
+      width: calc(100% - 20px);
+    }
+
+    /* FOOTER */
     footer {
-      margin-top: 60px;
-      padding: 40px;
+      margin-top: 50px;
+      padding: 30px;
       text-align: center;
-      font-size: 12px;
       color: #777;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #222;
+      font-size: 12px;
+    }
+
+    /* MOBILE */
+    @media(max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .hero {
+        font-size: 24px;
+        height: 40vh;
+        text-align: center;
+      }
+
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
@@ -113,8 +169,9 @@
   <div class="nav-right">
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">LOGIN</button>
-<button onclick="register()">SIGN UP</button>
+
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Sign Up</button>
 
     <span>🛒 <span id="cart-count">0</span></span>
     <button onclick="viewCart()">Cart</button>
@@ -135,33 +192,35 @@
 let token = localStorage.getItem("token") || '';
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// ================= LOGIN =================
+// REGISTER
 async function register(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/register',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value
+      email: email.value,
+      password: password.value
     })
   });
 
   const data = await res.json();
 
   if(data.message){
-    alert("Registered! Logging in...");
-login();
+    alert("Registered!");
+    login();
   } else {
     alert("Signup failed");
   }
 }
-  async function login(){
+
+// LOGIN
+async function login(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/login',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value
+      email: email.value,
+      password: password.value
     })
   });
 
@@ -175,11 +234,10 @@ login();
   token = data.token;
   localStorage.setItem("token", token);
 
-  alert("Login successful");
-  loadProducts();
+  alert("Login success");
 }
 
-// ================= LOAD PRODUCTS =================
+// LOAD PRODUCTS
 async function loadProducts(){
   const container = document.getElementById('products');
   container.innerHTML = "Loading...";
@@ -195,25 +253,24 @@ async function loadProducts(){
         <img src="${p.image}" />
         <h3>${p.name}</h3>
         <div class="price">₹${p.price}</div>
-        <button onclick="addToCart('${p._id}','${p.name}',${p.price})">ADD</button>
+        <button onclick="addToCart('${p._id}','${p.name}',${p.price})">Add to Cart</button>
       </div>
     `;
   });
 }
 
-// ================= CART =================
-function addToCart(product){
-  const item = cart.find(i => i.id === product._id);
+// CART
+function addToCart(id, name, price){
+  const item = cart.find(i => i.id === id);
 
   if(item){
     item.quantity += 1;
   } else {
-    cart.push({ id: product._id, name: product.name, price: product.price, quantity: 1 });
+    cart.push({ id, name, price, quantity: 1 });
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCart();
-  alert("Added to cart");
 }
 
 function updateCart(){
@@ -235,9 +292,8 @@ function viewCart(){
   alert(text);
 }
 
-// ================= INIT =================
+// INIT
 updateCart();
-
 loadProducts();
 </script>
 
