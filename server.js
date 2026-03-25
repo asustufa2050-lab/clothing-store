@@ -106,6 +106,7 @@ app.post('/login', async (req, res) => {
 });
 
 // ================= PRODUCTS =================
+// GET PRODUCTS (with filters)
 app.get('/products', async (req, res) => {
   const { category, size, maxPrice } = req.query;
 
@@ -118,18 +119,9 @@ app.get('/products', async (req, res) => {
   const products = await Product.find(filter);
   res.json(products);
 });
-app.post('/products', auth, admin, async (req, res) => {app.get('/products', async (req, res) => {
-  const { category, size, maxPrice } = req.query;
 
-  let filter = {};
-
-  if(category) filter.category = category;
-  if(size) filter.size = size;
-  if(maxPrice) filter.price = { $lte: maxPrice };
-
-  const products = await Product.find(filter);
-  res.json(products);
-});
+// ADD PRODUCT (ADMIN ONLY)
+app.post('/products', auth, admin, async (req, res) => {
   const { name, price, image } = req.body;
 
   if(!name || !price || !image){
@@ -140,6 +132,7 @@ app.post('/products', auth, admin, async (req, res) => {app.get('/products', asy
   res.json(product);
 });
 
+// DELETE PRODUCT (ADMIN ONLY)
 app.delete('/products/:id', auth, admin, async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
