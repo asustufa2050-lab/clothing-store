@@ -31,7 +31,9 @@ const User = mongoose.model('User', {
 const Product = mongoose.model('Product', {
   name: String,
   price: Number,
-  image: String
+  image: String,
+  category: String,
+  size: String
 });
 
 const Cart = mongoose.model('Cart', {
@@ -96,26 +98,51 @@ app.post('/login', async (req, res) => {
 
   const token = jwt.sign(
   { id: user._id, isAdmin: user.isAdmin },
-  process.env.JWT_SECRET
+  process.env.JWT_SECRET,
+  { expiresIn: "7d" }
 );
 
-  res.json({ token });
-});
+  res.json({ token, isAdmin: user.isAdmin });
 
 // ================= PRODUCTS =================
 app.get('/products', async (req, res) => {
-  res.json(await Product.find());
-});
+  const { category, size, maxPrice } = req.query;
 
-app.post('/products', auth, admin, async (req, res) => {
-  const product = await new Product(req.body).save();
+  let filter = {};
+
+  if(category) filter.category = category;
+  if(size) filter.size = size;
+  if(maxPrice) filter.price = { $lte: maxPrice };
+
+  const products = await Product.find(filter);
+  res.json(products);
+});
+app.post('/products', auth, admin, async (req, res) => {app.get('/products', async (req, res) => {
+  const { category, size, maxPrice } = req.query;
+
+  let filter = {};
+
+  if(category) filter.category = category;
+  if(size) filter.size = size;
+  if(maxPrice) filter.price = { $lte: maxPrice };
+
+  const products = await Product.find(filter);
+  res.json(products);
+});
+  const { name, price, image } = req.body;
+
+  if(!name || !price || !image){
+    return res.status(400).json({ message: "Missing fields" });
+  }
+
+  const product = await new Product({ name, price, image }).save();
   res.json(product);
 });
-app.delete('/products/:id', async (req, res) => {
+
+app.delete('/products/:id', auth, admin, async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
-
 // ================= CART =================
 app.post('/cart', auth, async (req, res) => {
   const { productId, quantity } = req.body;
