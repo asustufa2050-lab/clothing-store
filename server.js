@@ -112,6 +112,10 @@ app.post('/products', auth, admin, async (req, res) => {
   const product = await new Product(req.body).save();
   res.json(product);
 });
+app.delete('/products/:id', async (req, res) => {
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
+});
 
 // ================= CART =================
 app.post('/cart', auth, async (req, res) => {
