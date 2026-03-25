@@ -1,235 +1,197 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>STORE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STORE</title>
 
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter';}
-    body{background:#0f0f0f;color:#fff;}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    header{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:15px 30px;background:#111;border-bottom:1px solid #222;
-    }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter';}
+body{background:#0e0e0e;color:#fff;}
 
-    .logo{font-weight:600;letter-spacing:3px;}
+/* NAV */
+header{
+  display:flex;justify-content:space-between;
+  padding:20px 40px;border-bottom:1px solid #222;
+}
+.logo{letter-spacing:4px;font-weight:600;}
+.nav button{background:none;border:none;color:#fff;margin-left:15px;cursor:pointer;}
 
-    .nav-right{display:flex;gap:10px;align-items:center;}
+/* HERO */
+.hero{
+  height:70vh;
+  background:url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover;
+  display:flex;align-items:center;justify-content:center;
+  font-size:48px;font-weight:600;
+}
 
-    button{
-      background:#6366f1;border:none;padding:8px 12px;
-      color:#fff;border-radius:6px;cursor:pointer;
-    }
+/* FILTER */
+.filters{
+  padding:20px 40px;display:flex;gap:10px;
+}
+select{
+  background:#111;color:#fff;border:1px solid #333;padding:8px;
+}
 
-    .hero{
-      height:50vh;
-      background:url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover;
-      display:flex;align-items:center;justify-content:center;
-      font-size:32px;font-weight:600;
-    }
+/* PRODUCTS */
+.products{
+  padding:40px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:30px;
+}
 
-    .products{
-      padding:30px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:20px;
-    }
+.card{cursor:pointer;}
+.img{height:320px;overflow:hidden;}
+.img img{width:100%;height:100%;object-fit:cover;transition:0.4s;}
+.card:hover img{transform:scale(1.1);}
+.info{margin-top:10px;}
+.price{color:#aaa;font-size:14px;}
 
-    .card{
-      background:#181818;border-radius:12px;overflow:hidden;
-      transition:0.3s;border:1px solid #222;
-    }
+/* DRAWERS */
+.drawer{
+  position:fixed;top:0;right:-100%;
+  width:100%;max-width:400px;height:100%;
+  background:#111;transition:0.4s;z-index:200;
+  padding:30px;
+}
+.drawer.active{right:0;}
 
-    .card:hover{transform:translateY(-5px);}
+/* INPUT */
+input{
+  width:100%;padding:12px;margin:10px 0;
+  background:#0e0e0e;border:1px solid #333;color:#fff;
+}
 
-    .img-container{position:relative;overflow:hidden;}
+/* BUTTON */
+.main-btn{
+  width:100%;padding:12px;background:#fff;color:#000;border:none;
+}
 
-    .img-container img{
-      width:100%;height:260px;object-fit:cover;
-      transition:0.4s;
-    }
-
-    .card:hover img{transform:scale(1.08);}
-
-    .overlay{
-      position:absolute;bottom:0;width:100%;
-      background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
-      padding:10px;opacity:0;transition:0.3s;
-    }
-
-    .card:hover .overlay{opacity:1;}
-
-    .card-info{padding:10px;}
-
-    .price-row{
-      display:flex;justify-content:space-between;
-      align-items:center;
-    }
-
-    .wishlist{cursor:pointer;}
-
-    .modal{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.8);
-      display:none;justify-content:center;align-items:center;
-    }
-
-    .modal-content{
-      background:#181818;padding:20px;border-radius:10px;
-      width:90%;max-width:400px;
-    }
-
-    input{
-      width:100%;padding:8px;margin:5px 0;
-      background:#111;border:1px solid #333;color:#fff;
-    }
-
-    .footer{
-      margin-top:50px;padding:30px;background:#111;text-align:center;
-    }
-  </style>
+/* FOOTER */
+footer{
+  padding:30px;text-align:center;background:#111;margin-top:40px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
   <div class="logo">STORE</div>
-
-  <div class="nav-right">
-    <span id="userText"></span>
-    <button onclick="openLogin()">Login</button>
-    <button id="adminBtn" onclick="openAdmin()" style="display:none;">Admin</button>
-    <button onclick="logout()">Logout</button>
+  <div class="nav">
+    <button onclick="openAuth()">Account</button>
+    <button onclick="openCart()">Cart</button>
   </div>
 </header>
 
 <div class="hero">NEW COLLECTION</div>
+
+<div class="filters">
+  <select id="category" onchange="loadProducts()">
+    <option value="">All</option>
+    <option value="men">Men</option>
+    <option value="women">Women</option>
+  </select>
+
+  <select id="size" onchange="loadProducts()">
+    <option value="">Size</option>
+    <option>S</option>
+    <option>M</option>
+    <option>L</option>
+  </select>
+</div>
+
 <div class="products" id="products"></div>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-content">
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Sign Up</button>
-  </div>
+<!-- AUTH -->
+<div class="drawer" id="authDrawer">
+  <h2 id="authTitle">Login</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="main-btn" onclick="auth()">Continue</button>
+  <p onclick="toggleAuth()" id="switchText">Create account</p>
 </div>
 
-<!-- ADMIN -->
-<div class="modal" id="adminModal">
-  <div class="modal-content">
-    <input id="pname" placeholder="Name">
-    <input id="pprice" placeholder="Price">
-    <input id="pimage" placeholder="Image">
-    <button onclick="addProduct()">Add Product</button>
-  </div>
+<!-- CART -->
+<div class="drawer" id="cartDrawer">
+  <h2>Cart</h2>
+  <div id="cartItems"></div>
 </div>
 
-<footer class="footer">© 2026 STORE</footer>
+<footer>© 2026 STORE</footer>
 
 <script>
-let token = localStorage.getItem("token") || "";
-let isAdmin = localStorage.getItem("isAdmin") === "true";
+let isLogin=true;
+let cart=[];
 
-function openLogin(){loginModal.style.display='flex';}
-function openAdmin(){adminModal.style.display='flex';}
+function openAuth(){authDrawer.classList.add("active");}
+function openCart(){cartDrawer.classList.add("active"); renderCart();}
 
-function logout(){
-  localStorage.clear();
-  location.reload();
+function toggleAuth(){
+  isLogin=!isLogin;
+  authTitle.innerText=isLogin?"Login":"Sign Up";
 }
 
-async function login(){
-  const res = await fetch('https://clothing-store-2-vahe.onrender.com/login',{
-    method:'POST',
+async function auth(){
+  const url=isLogin?"login":"register";
+
+  const res=await fetch(`https://clothing-store-2-vahe.onrender.com/${url}`,{
+    method:"POST",
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email.value,password:password.value})
   });
 
-  const data = await res.json();
+  const data=await res.json();
 
-  if(data.token){
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("isAdmin", data.isAdmin);
-
-    if(data.isAdmin){
-      adminBtn.style.display="block";
+  if(isLogin){
+    if(data.token){
+      localStorage.setItem("token",data.token);
+      alert("Logged in");
+      authDrawer.classList.remove("active");
     }
-
-    userText.innerText = "Logged in";
-    loginModal.style.display="none";
+  }else{
+    alert("Account created");
+    toggleAuth();
   }
 }
 
-async function register(){
-  await fetch('https://clothing-store-2-vahe.onrender.com/register',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email.value,password:password.value})
-  });
-
-  login();
-}
-
 async function loadProducts(){
-  const res = await fetch('https://clothing-store-2-vahe.onrender.com/products');
-  const data = await res.json();
+  let url="https://clothing-store-2-vahe.onrender.com/products?";
+  if(category.value) url+=`category=${category.value}&`;
+  if(size.value) url+=`size=${size.value}`;
+
+  const res=await fetch(url);
+  const data=await res.json();
 
   products.innerHTML="";
 
   data.forEach(p=>{
     products.innerHTML+=`
       <div class="card">
-        <div class="img-container">
+        <div class="img">
           <img src="${p.image}">
-          <div class="overlay">
-            <button onclick="addToCart('${p._id}','${p.name}',${p.price}')">Add</button>
-          </div>
         </div>
-        <div class="card-info">
-          <h3>${p.name}</h3>
-          <div class="price-row">
-            <span>₹${p.price}</span>
-            <span class="wishlist">❤️</span>
-          </div>
+        <div class="info">
+          <h4>${p.name}</h4>
+          <p class="price">₹${p.price}</p>
+          <button class="main-btn" onclick="addToCart('${p.name}',${p.price})">Add</button>
         </div>
       </div>
     `;
   });
 }
 
-async function addProduct(){
-  const token = localStorage.getItem("token");
-
-  const res = await fetch('https://clothing-store-2-vahe.onrender.com/products',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'Authorization': token
-    },
-    body:JSON.stringify({
-      name:pname.value,
-      price:pprice.value,
-      image:pimage.value
-    })
-  });
-
-  if(res.status===403){
-    alert("Admin only");
-    return;
-  }
-
-  alert("Added");
-  loadProducts();
+function addToCart(name,price){
+  cart.push({name,price});
 }
 
-function addToCart(){alert("Cart working");}
-
-if(isAdmin){
-  adminBtn.style.display="block";
+function renderCart(){
+  cartItems.innerHTML="";
+  cart.forEach(i=>{
+    cartItems.innerHTML+=`<p>${i.name} - ₹${i.price}</p>`;
+  });
 }
 
 loadProducts();
