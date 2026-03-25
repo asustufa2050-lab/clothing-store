@@ -103,6 +103,7 @@ app.post('/login', async (req, res) => {
 );
 
   res.json({ token, isAdmin: user.isAdmin });
+});
 
 // ================= PRODUCTS =================
 app.get('/products', async (req, res) => {
