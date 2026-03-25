@@ -23,9 +23,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ================= MODELS =================
 const User = mongoose.model('User', {
-  email: { type: String, unique: true },
+  email: String,
   password: String,
-  role: { type: String, default: "user" }
+  isAdmin: { type: Boolean, default: false }
 });
 
 const Product = mongoose.model('Product', {
