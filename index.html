@@ -3,221 +3,177 @@
 <head>
   <title>STORE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter';}
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter';}
+body{background:#0f0f0f;color:#fff;}
 
-    body{background:#0f0f0f;color:#fff;}
+header{
+  display:flex;justify-content:space-between;
+  padding:15px 30px;background:#111;border-bottom:1px solid #222;
+}
 
-    header{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:15px 30px;background:#111;border-bottom:1px solid #222;
-      position:sticky;top:0;z-index:100;
-    }
+button{
+  background:#6366f1;border:none;padding:8px 12px;
+  color:#fff;border-radius:6px;cursor:pointer;
+}
 
-    .logo{letter-spacing:3px;font-weight:600;}
+.products{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
 
-    .nav-right{display:flex;gap:10px;align-items:center;}
+.card{background:#181818;border-radius:10px;overflow:hidden;}
+.card img{width:100%;height:220px;object-fit:cover;}
 
-    button{
-      background:#6366f1;border:none;padding:8px 12px;
-      color:#fff;border-radius:6px;cursor:pointer;
-    }
+.filters{
+  display:flex;gap:10px;padding:10px;
+}
 
-    .hero{
-      height:60vh;
-      background:url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover;
-      display:flex;align-items:center;justify-content:center;
-      font-size:40px;font-weight:600;
-    }
+select,input{padding:6px;background:#111;border:1px solid #333;color:#fff;}
 
-    .products{
-      padding:30px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:20px;
-    }
+.modal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;justify-content:center;align-items:center;
+}
 
-    .card{
-      background:#181818;border-radius:12px;overflow:hidden;
-    }
+.modal-content{
+  background:#181818;padding:20px;border-radius:10px;width:90%;max-width:400px;
+}
 
-    .card img{width:100%;height:260px;object-fit:cover;}
-
-    .card h3{padding:10px;font-size:14px;}
-
-    .price{padding:0 10px;color:#aaa;font-size:13px;}
-
-    .card button{margin:10px;width:calc(100% - 20px);}
-
-    /* MODALS */
-    .modal{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.8);
-      display:none;justify-content:center;align-items:center;
-    }
-
-    .modal-content{
-      background:#181818;padding:20px;border-radius:10px;
-      width:90%;max-width:400px;
-    }
-
-    input{
-      width:100%;padding:8px;margin:5px 0;
-      background:#111;border:1px solid #333;color:#fff;
-    }
-
-    .close{float:right;cursor:pointer;}
-
-    /* MOBILE */
-    @media(max-width:768px){
-      .products{grid-template-columns:repeat(2,1fr);}
-      .hero{font-size:24px;height:40vh;}
-    }
-  </style>
+.close{cursor:pointer;float:right;}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">STORE</div>
-  <div class="nav-right">
-    <button onclick="openLogin()">Login</button>
-    <span>🛒 <span id="cart-count">0</span></span>
-    <button onclick="openCart()">Cart</button>
+  <h3>STORE</h3>
+  <div>
+    <button onclick="openWishlist()">❤️ Wishlist</button>
+    <button onclick="openAdmin()">Admin</button>
   </div>
 </header>
 
-<div class="hero">NEW COLLECTION</div>
+<!-- FILTERS -->
+<div class="filters">
+  <select id="category">
+    <option value="">All</option>
+    <option value="shirt">Shirt</option>
+    <option value="hoodie">Hoodie</option>
+  </select>
+
+  <select id="size">
+    <option value="">Size</option>
+    <option>S</option><option>M</option><option>L</option>
+  </select>
+
+  <input type="number" id="maxPrice" placeholder="Max ₹">
+
+  <button onclick="applyFilters()">Apply</button>
+</div>
 
 <div class="products" id="products"></div>
 
-<!-- LOGIN MODAL -->
-<div class="modal" id="loginModal">
+<!-- WISHLIST -->
+<div class="modal" id="wishlistModal">
+  <div class="modal-content" id="wishlistContent"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="modal" id="adminModal">
   <div class="modal-content">
-    <span class="close" onclick="closeLogin()">✖</span>
-    <h3>Login</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Sign Up</button>
+    <span class="close" onclick="adminModal.style.display='none'">✖</span>
+    <h3>Add Product</h3>
+    <input id="pname" placeholder="Name">
+    <input id="pprice" placeholder="Price">
+    <input id="pimage" placeholder="Image URL">
+    <button onclick="addProduct()">Add</button>
   </div>
 </div>
 
-<!-- PRODUCT DETAIL MODAL -->
-<div class="modal" id="productModal">
-  <div class="modal-content" id="productDetail"></div>
-</div>
-
-<!-- CART MODAL -->
-<div class="modal" id="cartModal">
-  <div class="modal-content" id="cartContent"></div>
-</div>
-
 <script>
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let token = localStorage.getItem("token") || '';
+let productsData = [];
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 
-// LOGIN MODAL
-function openLogin(){loginModal.style.display='flex';}
-function closeLogin(){loginModal.style.display='none';}
-
-// CART MODAL
-function openCart(){
-  cartModal.style.display='flex';
-  renderCart();
-}
-function closeCart(){cartModal.style.display='none';}
-
-// PRODUCT MODAL
-function openProduct(p){
-  productModal.style.display='flex';
-  productDetail.innerHTML = `
-    <span class="close" onclick="productModal.style.display='none'">✖</span>
-    <img src="${p.image}" style="width:100%;height:250px;object-fit:cover;">
-    <h3>${p.name}</h3>
-    <p>₹${p.price}</p>
-    <button onclick="addToCart('${p._id}','${p.name}',${p.price})">Add to Cart</button>
-  `;
-}
-
-// AUTH
-async function login(){
-  const res = await fetch('https://clothing-store-2-vahe.onrender.com/login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email.value,password:password.value})
-  });
-  const data = await res.json();
-  if(data.token){
-    localStorage.setItem("token", data.token);
-    alert("Login success");
-    closeLogin();
-  } else alert("Login failed");
-}
-
-async function register(){
-  const res = await fetch('https://clothing-store-2-vahe.onrender.com/register',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email.value,password:password.value})
-  });
-  const data = await res.json();
-  if(data.message){
-    alert("Registered");
-    login();
-  }
-}
-
-// PRODUCTS
+// LOAD PRODUCTS
 async function loadProducts(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/products');
-  const data = await res.json();
+  productsData = await res.json();
+  render(productsData);
+}
 
-  products.innerHTML = '';
-
+// RENDER
+function render(data){
+  products.innerHTML='';
   data.forEach(p=>{
     products.innerHTML += `
-      <div class="card" onclick='openProduct(${JSON.stringify(p)})'>
+      <div class="card">
         <img src="${p.image}">
-        <h3>${p.name}</h3>
-        <div class="price">₹${p.price}</div>
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="addWishlist('${p._id}','${p.name}',${p.price})">❤️</button>
       </div>
     `;
   });
 }
 
-// CART
-function addToCart(id,name,price){
-  const item = cart.find(i=>i.id===id);
-  if(item) item.quantity++;
-  else cart.push({id,name,price,quantity:1});
+// FILTER
+function applyFilters(){
+  let filtered = productsData;
 
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCart();
+  const cat = category.value;
+  const size = size.value;
+  const max = maxPrice.value;
+
+  if(cat) filtered = filtered.filter(p=>p.category===cat);
+  if(size) filtered = filtered.filter(p=>p.size===size);
+  if(max) filtered = filtered.filter(p=>p.price <= max);
+
+  render(filtered);
 }
 
-function updateCart(){
-  cart-count.innerText = cart.reduce((s,i)=>s+i.quantity,0);
+// WISHLIST
+function addWishlist(id,name,price){
+  wishlist.push({id,name,price});
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
 }
 
-function renderCart(){
-  let html = `<span class="close" onclick="closeCart()">✖</span><h3>Cart</h3>`;
-  let total=0;
+function openWishlist(){
+  wishlistModal.style.display='flex';
+  let html='<span class="close" onclick="wishlistModal.style.display=\'none\'">✖</span><h3>Wishlist</h3>';
+  wishlist.forEach(i=>{
+    html+=`<p>${i.name} - ₹${i.price}</p>`;
+  });
+  wishlistContent.innerHTML=html;
+}
 
-  cart.forEach(i=>{
-    total+=i.price*i.quantity;
-    html+=`<p>${i.name} x ${i.quantity} = ₹${i.price*i.quantity}</p>`;
+// ADMIN
+function openAdmin(){
+  adminModal.style.display='flex';
+}
+
+async function addProduct(){
+  await fetch('https://clothing-store-2-vahe.onrender.com/products',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name:pname.value,
+      price:pprice.value,
+      image:pimage.value
+    })
   });
 
-  html+=`<h4>Total: ₹${total}</h4>`;
-  cartContent.innerHTML=html;
+  alert("Product added");
+  adminModal.style.display='none';
+  loadProducts();
 }
 
 // INIT
-updateCart();
 loadProducts();
 </script>
 
