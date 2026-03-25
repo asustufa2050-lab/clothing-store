@@ -245,11 +245,26 @@ async function loadProducts(){
   const res = await fetch('https://clothing-store-2-vahe.onrender.com/products');
   const data = await res.json();
 
-  products.innerHTML='';
+ products.innerHTML += `
+  <div class="card">
 
-  data.forEach(p=>{
-    products.innerHTML += `
-      <div class="card">
+    <div class="img-container" onclick='openProduct(${JSON.stringify(p)})'>
+      <img src="${p.image}">
+      <div class="overlay">
+        <button onclick="event.stopPropagation(); addToCart('${p._id}','${p.name}',${p.price})">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="card-info">
+      <h3>${p.name}</h3>
+      <div class="price-row">
+        <span class="price">₹${p.price}</span>
+        <span class="wishlist" onclick="addWishlist('${p._id}','${p.name}',${p.price})">❤️</span>
+      </div>
+    </div>
+
+  </div>
+`;
         <img src="${p.image}" onclick='openProduct(${JSON.stringify(p)})'>
         <h3>${p.name}</h3>
         <div class="price">₹${p.price}</div>
