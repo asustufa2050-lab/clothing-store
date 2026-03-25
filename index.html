@@ -195,7 +195,7 @@ async function loadProducts(){
         <img src="${p.image}" />
         <h3>${p.name}</h3>
         <div class="price">₹${p.price}</div>
-        <button onclick='addToCart(${JSON.stringify(p)})'>ADD</button>
+        <button onclick="addToCart('${p._id}','${p.name}',${p.price})">ADD</button>
       </div>
     `;
   });
