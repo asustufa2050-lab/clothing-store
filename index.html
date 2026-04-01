@@ -73,6 +73,54 @@ input{
 footer{
   padding:30px;text-align:center;background:#111;margin-top:40px;
 }
+/* CART UPGRADE */
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:15px 0;
+  border-bottom:1px solid #222;
+  padding-bottom:10px;
+}
+
+.qty{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.qty button{
+  background:#222;
+  border:none;
+  color:#fff;
+  width:25px;
+  height:25px;
+  cursor:pointer;
+}
+
+/* SUMMARY */
+#cartSummary{
+  position:absolute;
+  bottom:20px;
+  left:30px;
+  right:30px;
+}
+
+#total,#checkoutTotal{
+  margin:15px 0;
+  color:#aaa;
+}
+
+/* EMPTY CART */
+.empty{
+  color:#666;
+  margin-top:20px;
+}
+
+/* PREMIUM TOUCH */
+.drawer{
+  backdrop-filter: blur(10px);
+}
 </style>
 </head>
 
@@ -118,6 +166,12 @@ footer{
 <div class="drawer" id="cartDrawer">
   <h2>Cart</h2>
   <div id="cartItems"></div>
+
+  <!-- ADD THIS -->
+  <div id="cartSummary">
+    <p id="total"></p>
+    <button class="main-btn" onclick="openCheckout()">Checkout</button>
+  </div>
 </div>
 
 <footer>© 2026 STORE</footer>
@@ -195,7 +249,118 @@ function renderCart(){
 }
 
 loadProducts();
-</script>
+/* ===== CART UPGRADE ===== */
 
+/* override addToCart */
+function addToCart(name,price){
+  const item=cart.find(i=>i.name===name);
+
+  if(item){
+    item.qty++;
+  }else{
+    cart.push({name,price,qty:1});
+  }
+}
+
+/* render cart upgraded */
+function renderCart(){
+  cartItems.innerHTML="";
+
+  if(cart.length===0){
+    cartItems.innerHTML="<p class='empty'>Your cart is empty</p>";
+    total.innerText="";
+    return;
+  }
+
+  let sum=0;
+
+  cart.forEach((item,index)=>{
+    sum+=item.price*item.qty;
+
+    cartItems.innerHTML+=`
+      <div class="cart-item">
+        <div>
+          <p>${item.name}</p>
+          <small>₹${item.price}</small>
+        </div>
+
+        <div class="qty">
+          <button onclick="changeQty(${index},-1)">-</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${index},1)">+</button>
+        </div>
+
+        <button onclick="removeItem(${index})">x</button>
+      </div>
+    `;
+  });
+
+  total.innerText="Total: ₹"+sum;
+}
+
+/* qty change */
+function changeQty(i,delta){
+  cart[i].qty+=delta;
+  if(cart[i].qty<=0) cart.splice(i,1);
+  renderCart();
+}
+
+/* remove */
+function removeItem(i){
+  cart.splice(i,1);
+  renderCart();
+}
+
+/* ===== CHECKOUT ===== */
+
+function openCheckout(){
+  checkoutDrawer.classList.add("active");
+  renderCheckout();
+}
+
+function renderCheckout(){
+  checkoutItems.innerHTML="";
+  let sum=0;
+
+  cart.forEach(item=>{
+    sum+=item.price*item.qty;
+
+    checkoutItems.innerHTML+=`
+      <p>${item.name} x${item.qty} - ₹${item.price*item.qty}</p>
+    `;
+  });
+
+  checkoutTotal.innerText="Total: ₹"+sum;
+}
+
+function placeOrder(){
+  alert("Order placed successfully 🎉");
+  cart=[];
+  checkoutDrawer.classList.remove("active");
+  cartDrawer.classList.remove("active");
+  renderCart();
+}
+</script>
+<!-- CHECKOUT DRAWER -->
+<div class="drawer" id="checkoutDrawer">
+  <h2>Checkout</h2>
+
+  <h4>Shipping</h4>
+  <input placeholder="Full Name">
+  <input placeholder="Address">
+  <input placeholder="City">
+  <input placeholder="ZIP Code">
+
+  <h4>Payment</h4>
+  <input placeholder="Card Number">
+  <input placeholder="Expiry">
+  <input placeholder="CVV">
+
+  <h4>Order</h4>
+  <div id="checkoutItems"></div>
+  <p id="checkoutTotal"></p>
+
+  <button class="main-btn" onclick="placeOrder()">Place Order</button>
+</div>
 </body>
 </html>
